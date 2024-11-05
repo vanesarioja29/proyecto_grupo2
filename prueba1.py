@@ -3,3 +3,6 @@ import numpy as np
 import streamlit as st
 
 st.title("Proyecto Programación")
+n = st.slider("n", 5, 100, step=1)
+chart_data = pd.DataFrame(np.random.randn(n), columns=['data'])
+st.line_chart(chart_data)

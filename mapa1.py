@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 import json
 
 # Cargar los datos
-file_path = 'C:\Users\SAID\Desktop\GitHub_test\prueba\D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'  
+file_path = '/workspaces/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'  
 data = pd.read_csv(file_path, encoding='ISO-8859-1', delimiter=';')
 
 # Cargar el archivo GeoJSON de los departamentos de Perú
-geojson_path = 'C:\Users\SAID\Desktop\GitHub_test\prueba\D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'  # Cambia la ruta a tu archivo GeoJSON
-with open(geojson_path, 'r', encoding='utf-8') as file:
+geojson_path = '/workspaces/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'  # Cambia la ruta a tu archivo GeoJSON
+with open(geojson_path, 'r', encoding='ISO-8859-1') as file:
     peru_geojson = json.load(file)
 
 # Preprocesamiento: Convertir columnas relevantes a tipos numéricos

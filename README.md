@@ -1,4 +1,4 @@
-# Análisis y Visualización de la Composición de Residuos Sólidos Domiciliarios
+# Análisis y Visualización de la Composición de Residuos Sólidos Domiciliarios - Perú
 
 Este proyecto tiene como objetivo ofrecer una **visualización interactiva** de la composición de residuos sólidos domiciliarios en Perú, utilizando datos provenientes del Sistema de Información para la Gestión de los Residuos Sólidos – **SIGERSOL** y los **Estudios de Caracterización de Residuos Sólidos Municipales** (EC-RSM), que han sido estandarizados desde 2019.
 

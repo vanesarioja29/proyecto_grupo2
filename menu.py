@@ -50,7 +50,7 @@ st.title("Dashboard Interactivo de Residuos en el Perú 🌎")
 # Crear el menú de navegación
 selected_option = option_menu(
     menu_title=None,  # Quitar el encabezado del menú
-    options=["Home", "Data", "Mapas", "Gráfico Circular"],  # Opciones del menú
+    options=["Introducción", "Data", "Mapas", "Gráfico Circular"],  # Opciones del menú
     icons=["house", "table", "map", "pie-chart"],  # Iconos de las opciones
     default_index=0,  # Opción seleccionada por defecto
     orientation="horizontal"  # Orientación del menú
@@ -98,11 +98,20 @@ if selected_option == "Home":
 
 elif selected_option == "Data":
     st.subheader("Data - Exploración de la Base de Datos")
+    
+    # Cargar y procesar el archivo CSV
     file_path = '/workspaces/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
     data = pd.read_csv(file_path, encoding='ISO-8859-1', delimiter=';')
-
+    
+    # Filtrar las columnas relevantes (hasta "PERIODO")
+    data = data.loc[:, :'PERIODO']
+    
+    # Eliminar las filas no deseadas (7528 y 7529)
+    data = data.drop(index=[7528, 7529], errors='ignore')
+    
     st.write("A continuación, puedes explorar la base de datos de residuos de forma interactiva:")
     st.dataframe(data)  # Mostrar el CSV de manera interactiva
+
 
 elif selected_option == "Mapas":
     st.subheader("Mapas Interactivos de Residuos en el Perú")

@@ -38,7 +38,8 @@ st.sidebar.title("Opciones")
 # Cargar y mostrar un CSV
 if st.sidebar.checkbox("Mostrar archivo CSV"):
     st.header("Datos CSV")
-    csv_file = st.sidebar.text_input("Nombre del archivo CSV", "archivo.csv")
+    # Nombre exacto del archivo CSV
+    csv_file = "D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv"
     data_csv = cargar_csv(csv_file)
     if data_csv is not None:
         st.write(data_csv)
@@ -46,8 +47,9 @@ if st.sidebar.checkbox("Mostrar archivo CSV"):
 # Cargar y mostrar un shapefile
 if st.sidebar.checkbox("Mostrar archivo Shapefile"):
     st.header("Datos Geoespaciales (Shapefile)")
-    shapefile = st.sidebar.text_input("Nombre del archivo shapefile (sin extensión)", "shapefile")
-    shapefile_data = cargar_shapefile(f"{shapefile}.shp")
+    # Nombre exacto del archivo Shapefile
+    shapefile = "Departamental.shp"
+    shapefile_data = cargar_shapefile(shapefile)
     if shapefile_data is not None:
         st.write(shapefile_data)
 

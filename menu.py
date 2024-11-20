@@ -57,7 +57,7 @@ selected_option = option_menu(
 )
 
 # Lógica del menú
-if selected_option == "Home":
+if selected_option == "Introducción":
     st.subheader("Análisis y Visualización de la Composición de Residuos Sólidos Domiciliarios - Perú")
     st.write("""
     Este proyecto tiene como objetivo ofrecer una **visualización interactiva** de la composición de residuos sólidos 

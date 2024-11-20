@@ -129,8 +129,8 @@ elif selected_option == "Mapas":
     from streamlit_folium import folium_static
 
     # Rutas de los archivos
-    shapefile_path = '/workspaces/proyecto_grupo2/Departamental.shp'
-    data_path = '/workspaces/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
+    shapefile_path = '/proyecto_grupo2/Departamental.shp'
+    data_path = '/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
 
     # Cargar shapefile y CSV
     gdf_departamentos = gpd.read_file(shapefile_path)
@@ -224,7 +224,7 @@ elif selected_option == "Gráfico Circular":
     st.subheader("Gráfico Circular - Composición de Residuos")
     
     # Cargar datos para el gráfico circular
-    file_path = '/workspaces/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
+    file_path = '/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
     data = pd.read_csv(file_path, encoding='ISO-8859-1', delimiter=';')
 
     residuos_columns = [col for col in data.columns if col.startswith('QRESIDUOS_')]

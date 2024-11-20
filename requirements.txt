@@ -3,3 +3,5 @@ plotly
 streamlit_option_menu
 geopandas
 plotly.express
+folium
+streamlit_folium

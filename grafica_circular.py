@@ -1,22 +1,77 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import math  # Para usar funciones trigonométricas
+import plotly.express as px
 
-# Cargar el archivo CSV
+# Función para generar el gráfico circular interactivo
+def generar_grafico_circular(departamento, datos):
+    # Filtrar los datos del departamento seleccionado
+    selected_data = datos[datos['DEPARTAMENTO'] == departamento].iloc[0, 1:]
+    selected_data = selected_data[selected_data > 0]  # Excluir columnas con valor 0
+
+    # Ordenar los datos por cantidad en toneladas, descendente
+    selected_data = selected_data.sort_values(ascending=False)
+
+    # Limitar a los 5 residuos más grandes y agrupar el resto como "Otros"
+    if len(selected_data) > 5:
+        top_residuos = selected_data[:5]  # Tomar los 5 residuos más grandes
+        others = selected_data[5:].sum()  # Sumar el resto como "Otros"
+        top_residuos["Otros"] = others
+    else:
+        top_residuos = selected_data
+
+    # Crear la gráfica circular con Plotly
+    fig = px.pie(
+        names=top_residuos.index,
+        values=top_residuos.values,
+        title=f"Composición de los residuos más comunes en {departamento}",
+        hole=0.3  # Opcional: Gráfico tipo dona
+    )
+    fig.update_traces(
+        textinfo="percent+label",
+        textfont_size=12,
+        pull=[0.1]*len(top_residuos),
+        hovertemplate="<b>%{label}</b><br>Valor: %{value:,.2f} Tn<extra></extra>"  # Mensaje emergente personalizado
+    )
+    fig.update_layout(
+        legend_itemclick=False,  # Deshabilitar click para ocultar
+        legend_itemdoubleclick=False,  # Deshabilitar doble click
+        height=700,  # Ajustar altura del gráfico
+        width=900,   # Ajustar ancho del gráfico
+        title_font_size=24,
+        title_x=0.5,  # Centrar el título
+        legend=dict(
+            orientation="v",  # Cambiar la orientación a vertical
+            yanchor="middle",  # Alinear verticalmente con el gráfico
+            y=0.5,             # Posicionar en el centro vertical
+            xanchor="right",   # Alinear horizontalmente al borde del gráfico
+            x=1.2              # Ajustar la distancia al gráfico
+        )
+    )
+    return fig
+
+# Configuración inicial de la app
+st.set_page_config(page_title="Dashboard de Residuos - Gráficas Interactivas", layout="wide")
+st.title("Residuos mas comunes por departamento en el Perú 🌎")
+
+# Introducción breve
+st.write("""
+Selecciona un departamento de la lista desplegable para descubrir los **5 tipos de residuos más destacados** y su proporción en toneladas.
+""")
+
+# Cargar los datos procesados
 file_path = '/workspaces/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
 data = pd.read_csv(file_path, encoding='ISO-8859-1', delimiter=';')
 
-# Filtrar las columnas relevantes (aquellas que comienzan con 'QRESIDUOS_')
+# Filtrar las columnas relevantes
 residuos_columns = [col for col in data.columns if col.startswith('QRESIDUOS_')]
 residuos_columns.insert(0, 'DEPARTAMENTO')  # Asegurarse de incluir el departamento
 filtered_data = data[residuos_columns]
 
-# Convertir las columnas de residuos a numéricas y excluir NaN
-for col in residuos_columns[1:]:  # Excluyendo 'DEPARTAMENTO'
+# Convertir las columnas de residuos a numéricas
+for col in residuos_columns[1:]:
     filtered_data[col] = pd.to_numeric(filtered_data[col], errors='coerce')
 
-# Mapear los nombres de residuos a etiquetas más amigables
+# Mapear nombres de columnas a etiquetas amigables
 residuos_mapping = {
     "QRESIDUOS_DOM": "Domiciliarios",
     "QRESIDUOS_BOLSAS_PLASTICAS": "Bolsas Plásticas",
@@ -40,83 +95,17 @@ residuos_mapping = {
     "QRESIDUOS_LATA": "Lata",
     "QRESIDUOS_VIDRIO_TRANSPARENTE": "Vidrio transparente",
     "QRESIDUOS_TEXTILES": "Textiles"
-    # Agrega más mapeos aquí según sea necesario...
 }
 
-
-# Renombrar las columnas con etiquetas amigables
 filtered_data.rename(columns=residuos_mapping, inplace=True)
 
-# Agrupar por departamento y sumar los valores de residuos
+# Agrupar los datos por departamento
 grouped_data = filtered_data.groupby('DEPARTAMENTO').sum().reset_index()
-
-# Configuración inicial de la app
-st.set_page_config(page_title="Dashboard de Residuos - Gráficas Circulares", layout="wide")
-
-# Título del dashboard
-st.title("Dashboard de Residuos - Gráficas Circulares")
-st.write("Seleccione un departamento para visualizar los tipos de residuos generados.")
 
 # Selección del departamento
 departamentos = grouped_data['DEPARTAMENTO'].unique()
 selected_departamento = st.selectbox("Seleccione un Departamento:", sorted(departamentos))
 
-# Filtrar datos del departamento seleccionado y eliminar columnas con valor 0
-selected_data = grouped_data[grouped_data['DEPARTAMENTO'] == selected_departamento].iloc[0, 1:]
-selected_data = selected_data[selected_data > 0]  # Excluir columnas con valor 0
-
-# Ordenar los datos por cantidad en toneladas, descendente
-selected_data = selected_data.sort_values(ascending=False)
-
-# Limitar a los 8 residuos más grandes y agrupar el resto como "Otros"
-if len(selected_data) > 8:
-    top_residuos = selected_data[:8]  # Tomar los 8 residuos más grandes
-    others = selected_data[8:].sum()  # Sumar el resto como "Otros"
-    top_residuos["Otros"] = others
-else:
-    top_residuos = selected_data
-
-# Crear la gráfica circular
-labels = top_residuos.index
-values = top_residuos.values
-
-fig, ax = plt.subplots(figsize=(6, 6))  # Tamaño uniforme para todas las gráficas
-wedges, texts, autotexts = ax.pie(
-    values,
-    labels=None,  # No mostrar etiquetas aquí
-    autopct=lambda p: f'{p:.1f}%\n({p * sum(values) / 100:,.2f} Tn)',
-    startangle=90,
-    wedgeprops={'edgecolor': 'black'},
-    textprops={'fontsize': 8}  # Reducir el tamaño del autotexto
-)
-
-# Agregar líneas guía y etiquetas externas
-for i, (label, wedge) in enumerate(zip(labels, wedges)):
-    angle = (wedge.theta2 + wedge.theta1) / 2
-    x = math.cos(math.radians(angle)) * 1.4  # Aumentar el radio para etiquetas externas
-    y = math.sin(math.radians(angle)) * 1.4
-    connection_style = "arc3,rad=0.2"  # Estilo de conexión para una curva más pronunciada
-    ax.annotate(
-        label,
-        xy=(math.cos(math.radians(angle)) * wedge.r, math.sin(math.radians(angle)) * wedge.r),
-        xytext=(x, y),
-        arrowprops=dict(arrowstyle="-", connectionstyle=connection_style, color='gray'),
-        fontsize=9,  # Tamaño de fuente de las etiquetas externas
-        ha="center",
-        va="center"
-    )
-
-ax.axis('equal')  # Hacer el gráfico circular
-
-# Mostrar la gráfica en el dashboard
-st.subheader(f"Gráfica Circular de Residuos en {selected_departamento}")
-st.pyplot(fig)
-
-# Mostrar los valores numéricos también en formato tabular
-st.write(f"**Valores en toneladas para {selected_departamento}:**")
-residuos_table = pd.DataFrame({
-    'Tipo de Residuo': labels,
-    'Cantidad (Toneladas)': [f"{v:,.2f}" for v in values]
-})
-st.table(residuos_table)
-
+# Generar y mostrar el gráfico circular interactivo
+fig = generar_grafico_circular(selected_departamento, grouped_data)
+st.plotly_chart(fig)

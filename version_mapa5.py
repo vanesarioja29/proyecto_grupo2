@@ -11,7 +11,7 @@ st.set_page_config(page_title="Dashboard de Residuos", layout="wide")
 shapefile_path = '/workspaces/proyecto_grupo2/Departamental.shp'
 data_path = '/workspaces/proyecto_grupo2/D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
 
-# Cargar shapefile y CSV
+# Archivos hapefile y CSV
 gdf_departamentos = gpd.read_file(shapefile_path)
 data = pd.read_csv(data_path, encoding='ISO-8859-1', delimiter=';')
 

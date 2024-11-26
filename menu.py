@@ -216,7 +216,7 @@ elif selected_option == "Gráfico Circular":
 
     st.markdown("""
     En esta sección, podrás explorar la **composición de residuos sólidos** generados en los diferentes departamentos del Perú, 
-    visualizados a través de un gráfico circular. Este gráfico muestra los ** 5 tipos de residuos más comunes** en un departamento 
+    visualizados a través de un gráfico circular. Este gráfico muestra los **5 tipos de residuos más comunes** en un departamento 
     específico, permitiéndote analizar la distribución de residuos domiciliarios, plásticos, alimentos, maleza, entre otros, 
     en términos de **toneladas** generadas.
     
@@ -260,6 +260,6 @@ elif selected_option == "Gráfico Circular":
     grouped_data = filtered_data.groupby('DEPARTAMENTO').sum().reset_index()
 
     departamentos = grouped_data['DEPARTAMENTO'].unique()
-    selected_departamento = st.selectbox("Seleccione un Departamento:", sorted(departamentos))
+    selected_departamento = st.selectbox(sorted(departamentos))
     fig = generar_grafico_circular(selected_departamento, grouped_data)
     st.plotly_chart(fig)

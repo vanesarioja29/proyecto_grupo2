@@ -121,7 +121,7 @@ elif selected_option == "Mapas":
     st.write("""
     En esta sección, puedes explorar dos tipos de mapas:
     - **Mapa Interactivo por Departamento:** Muestra un marcador con información detallada sobre los residuos domésticos, de alimentos y maleza generados en cada departamento.
-    - **Mapa de Colorimetría:** Representa los residuos totales generados en cada departamento con un esquema de colores que varía según la cantidad de toneladas.
+    - **Mapa de Coroplético:** Representa los residuos totales generados en cada departamento con un esquema de colores que varía según la cantidad de toneladas.
 
     ¡Interactúa con los mapas para conocer más detalles! 🌍
     """)

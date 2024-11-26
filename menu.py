@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from streamlit_option_menu import option_menu
+import geopandas as gpd
+import folium
+from streamlit_folium import folium_static
 
 # Función para generar el gráfico circular interactivo
 def generar_grafico_circular(departamento, datos):
@@ -56,6 +59,8 @@ selected_option = option_menu(
     orientation="horizontal"  # Orientación del menú
 )
 
+data_path = 'D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
+
 # Lógica del menú
 if selected_option == "Introducción":
     st.subheader("Análisis y Visualización de la Composición de Residuos Sólidos Domiciliarios - Perú")
@@ -100,8 +105,7 @@ elif selected_option == "Data":
     st.subheader("Data - Exploración de la Base de Datos")
     
     # Cargar y procesar el archivo CSV
-    file_path = 'D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
-    data = pd.read_csv(file_path, encoding='ISO-8859-1', delimiter=';')
+    data = pd.read_csv(data_path, encoding='ISO-8859-1', delimiter=';')
     
     # Filtrar las columnas relevantes (hasta "PERIODO")
     data = data.loc[:, :'PERIODO']
@@ -123,14 +127,8 @@ elif selected_option == "Mapas":
     ¡Interactúa con los mapas para conocer más detalles! 🌍
     """)
 
-    import geopandas as gpd
-    import pandas as pd
-    import folium
-    from streamlit_folium import folium_static
-
     # Rutas de los archivos
     shapefile_path = 'Departamental.shp'
-    data_path = 'D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
 
     # Cargar shapefile y CSV
     gdf_departamentos = gpd.read_file(shapefile_path)
@@ -224,8 +222,7 @@ elif selected_option == "Gráfico Circular":
     st.subheader("Gráfico Circular - Composición de Residuos")
     
     # Cargar datos para el gráfico circular
-    file_path = 'D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
-    data = pd.read_csv(file_path, encoding='ISO-8859-1', delimiter=';')
+    data = pd.read_csv(data_path, encoding='ISO-8859-1', delimiter=';')
 
     residuos_columns = [col for col in data.columns if col.startswith('QRESIDUOS_')]
     residuos_columns.insert(0, 'DEPARTAMENTO')

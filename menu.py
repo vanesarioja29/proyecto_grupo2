@@ -260,6 +260,6 @@ elif selected_option == "Gráfico Circular":
     grouped_data = filtered_data.groupby('DEPARTAMENTO').sum().reset_index()
 
     departamentos = grouped_data['DEPARTAMENTO'].unique()
-    selected_departamento = st.selectbox(sorted(departamentos))
+    selected_departamento = st.selectbox("", sorted(departamentos))
     fig = generar_grafico_circular(selected_departamento, grouped_data)
     st.plotly_chart(fig)

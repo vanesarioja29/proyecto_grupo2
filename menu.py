@@ -207,12 +207,22 @@ elif selected_option == "Mapas":
         folium_static(map_left)
 
     with col3:
-        st.subheader("Mapa de colorimetría y total de residuos")
+        st.subheader("Mapa Coroplético de Residuos Totales")
         folium_static(map_right)
 
 
 elif selected_option == "Gráfico Circular":
     st.subheader("Gráfico Circular - Composición de Residuos")
+
+    st.markdown("""
+    En esta sección, podrás explorar la **composición de residuos sólidos** generados en los diferentes departamentos del Perú, 
+    visualizados a través de un gráfico circular. Este gráfico muestra los ** 5 tipos de residuos más comunes** en un departamento 
+    específico, permitiéndote analizar la distribución de residuos domiciliarios, plásticos, alimentos, maleza, entre otros, 
+    en términos de **toneladas** generadas.
+    
+    Selecciona un departamento del Perú para ver los detalles sobre los residuos que se generan allí. 🌱
+
+    """)
     
     residuos_columns = [col for col in data.columns if col.startswith('QRESIDUOS_')]
     residuos_columns.insert(0, 'DEPARTAMENTO')

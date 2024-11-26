@@ -1,12 +1,11 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from streamlit_option_menu import option_menu
 import geopandas as gpd
 import folium
+from streamlit_option_menu import option_menu
 from streamlit_folium import folium_static
 
-# Función para generar el gráfico circular interactivo
 def generar_grafico_circular(departamento, datos):
     selected_data = datos[datos['DEPARTAMENTO'] == departamento].iloc[0, 1:]
     selected_data = selected_data[selected_data > 0]
@@ -22,7 +21,7 @@ def generar_grafico_circular(departamento, datos):
     fig = px.pie(
         names=top_residuos.index,
         values=top_residuos.values,
-        title=f"Composición de los residuos más comunes en {departamento}",
+        title=f"Composición de los residuos más comunes por Departamento",
         hole=0.3
     )
     fig.update_traces(
@@ -50,16 +49,20 @@ def generar_grafico_circular(departamento, datos):
 st.set_page_config(page_title="Dashboard de Residuos en el Perú", layout="wide")
 st.title("Dashboard Interactivo de Residuos en el Perú 🌎")
 
+# Definir rutas constantes
+data_path = 'D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
+shapefile_path = 'Departamental.shp'
+data = pd.read_csv(data_path, encoding='ISO-8859-1', delimiter=';')
+gdf_departamentos = gpd.read_file(shapefile_path)
+
 # Crear el menú de navegación
 selected_option = option_menu(
-    menu_title=None,  # Quitar el encabezado del menú
+    menu_title=None,
     options=["Introducción", "Data", "Mapas", "Gráfico Circular", "Sobre Nosotros"],  # Opciones del menú
     icons=["house", "table", "map", "pie-chart", "people"],  # Iconos de las opciones
-    default_index=0,  # Opción seleccionada por defecto
-    orientation="horizontal"  # Orientación del menú
+    default_index=0,
+    orientation="horizontal" 
 )
-
-data_path = 'D. Composición Anual de residuos domiciliarios_Distrital_2019_2022 (1).csv'
 
 # Lógica del menú
 if selected_option == "Introducción":
@@ -104,9 +107,6 @@ if selected_option == "Introducción":
 elif selected_option == "Data":
     st.subheader("Data - Exploración de la Base de Datos")
     
-    # Cargar y procesar el archivo CSV
-    data = pd.read_csv(data_path, encoding='ISO-8859-1', delimiter=';')
-    
     # Filtrar las columnas relevantes (hasta "PERIODO")
     data = data.loc[:, :'PERIODO']
     
@@ -114,8 +114,7 @@ elif selected_option == "Data":
     data = data.drop(index=[7528, 7529], errors='ignore')
     
     st.write("A continuación, puedes explorar la base de datos de residuos de forma interactiva:")
-    st.dataframe(data)  # Mostrar el CSV de manera interactiva
-
+    st.dataframe(data)
 
 elif selected_option == "Mapas":
     st.subheader("Mapas Interactivos de Residuos en el Perú")
@@ -126,13 +125,6 @@ elif selected_option == "Mapas":
 
     ¡Interactúa con los mapas para conocer más detalles! 🌍
     """)
-
-    # Rutas de los archivos
-    shapefile_path = 'Departamental.shp'
-
-    # Cargar shapefile y CSV
-    gdf_departamentos = gpd.read_file(shapefile_path)
-    data = pd.read_csv(data_path, encoding='ISO-8859-1', delimiter=';')
 
     # Renombrar columna en el GeoDataFrame
     gdf_departamentos.rename(columns={'DEPARTAMEN': 'DEPARTAMENTO'}, inplace=True)
@@ -179,19 +171,19 @@ elif selected_option == "Mapas":
         geo_data=gdf_merged,
         name="Residuos Totales",
         data=gdf_merged,
-        columns=["DEPARTAMENTO", "TOTAL_RESIDUOS"],  # Usamos el total de residuos
-        key_on="feature.properties.DEPARTAMENTO",  # Coincidir con la propiedad del shapefile
+        columns=["DEPARTAMENTO", "TOTAL_RESIDUOS"],
+        key_on="feature.properties.DEPARTAMENTO",
         fill_color="YlOrRd",  # Escala de colores (amarillo a rojo)
         fill_opacity=0.7,
         line_opacity=0.2,
         legend_name="Toneladas de Residuos Totales",
-        bins=12,  # Aseguramos que haya 12 intervalos
-        highlight=True,  # Resaltar los departamentos cuando pasas el ratón por encima
-        nan_fill_opacity=0,  # Opcional: para dejar los valores faltantes sin color
+        bins=12,  # 12 intervalos
+        highlight=True,
+        nan_fill_opacity=0,
         overlay=True,
     ).add_to(map_right)
 
-    # Añadir los departamentos al mapa con un popup que solo muestre el dato total de residuos
+    # Popup que solo muestre el dato total de residuos
     for idx, row in gdf_merged.iterrows():
         lat, lon = row['geometry'].centroid.y, row['geometry'].centroid.x
         residuos_total = format(round(row['TOTAL_RESIDUOS'], 2), ',')
@@ -208,22 +200,20 @@ elif selected_option == "Mapas":
         ).add_to(map_right)
 
     # Dividir en columnas para mostrar los mapas
-    col1, col2, col3 = st.columns([1, 0.1, 1])  # Espacio en el medio para separar mapas
+    col1, col2, col3 = st.columns([1, 0.1, 1])
 
     with col1:
         st.subheader("Mapa Interactivo por Departamento")
         folium_static(map_left)
 
     with col3:
-        st.subheader("Mapa con Colorimetría y Total de Residuos")
+        st.subheader("Mapa de colorimetría y total de residuos")
         folium_static(map_right)
-        
+
+
 elif selected_option == "Gráfico Circular":
     st.subheader("Gráfico Circular - Composición de Residuos")
     
-    # Cargar datos para el gráfico circular
-    data = pd.read_csv(data_path, encoding='ISO-8859-1', delimiter=';')
-
     residuos_columns = [col for col in data.columns if col.startswith('QRESIDUOS_')]
     residuos_columns.insert(0, 'DEPARTAMENTO')
     filtered_data = data[residuos_columns]
@@ -263,4 +253,3 @@ elif selected_option == "Gráfico Circular":
     selected_departamento = st.selectbox("Seleccione un Departamento:", sorted(departamentos))
     fig = generar_grafico_circular(selected_departamento, grouped_data)
     st.plotly_chart(fig)
-

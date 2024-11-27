@@ -107,30 +107,31 @@ if selected_option == "Introducción":
 elif selected_option == "Data":
     st.subheader("Data - Exploración de la Base de Datos")
     
-    # Filtrar las columnas relevantes (hasta "PERIODO")
+    # Filtrar columnas relevantes
     data = data.loc[:, :'PERIODO']
     
-    # Eliminar las filas no deseadas (7528 y 7529)
+    # Eliminar filas no deseadas
     data = data.drop(index=[7528, 7529], errors='ignore')
     
-    # Opciones de filtros
-    departamentos = sorted(data['DEPARTAMENTO'].unique())
-    selected_departamento = st.selectbox("Selecciona un Departamento:", ["Todos"] + departamentos)
+    # Crear filtros interactivos
+    periodos = sorted(data['PERIODO'].dropna().unique())
+    selected_periodo = st.selectbox("Selecciona el Periodo", periodos, index=0)
 
-    # Filtrar por departamento
-    if selected_departamento != "Todos":
-        provincias = sorted(data[data['DEPARTAMENTO'] == selected_departamento]['PROVINCIA'].unique())
-        selected_provincia = st.selectbox("Selecciona una Provincia:", ["Todos"] + provincias)
-        
-        if selected_provincia != "Todos":
-            filtered_data = data[(data['DEPARTAMENTO'] == selected_departamento) & (data['PROVINCIA'] == selected_provincia)]
-        else:
-            filtered_data = data[data['DEPARTAMENTO'] == selected_departamento]
-    else:
-        filtered_data = data
+    departamentos = sorted(data['DEPARTAMENTO'].dropna().unique())
+    selected_departamento = st.selectbox("Selecciona el Departamento", departamentos, index=0)
 
-    # Mostrar la base de datos filtrada
-    st.write("A continuación, puedes explorar los datos filtrados por Departamento y Provincia:")
+    # Filtrar provincias dinámicamente según el departamento
+    provincias = sorted(data[data['DEPARTAMENTO'] == selected_departamento]['PROVINCIA'].dropna().unique())
+    selected_provincia = st.selectbox("Selecciona la Provincia", provincias, index=0)
+
+    # Filtrar los datos según los criterios seleccionados
+    filtered_data = data[
+        (data['PERIODO'] == selected_periodo) &
+        (data['DEPARTAMENTO'] == selected_departamento) &
+        (data['PROVINCIA'] == selected_provincia)
+    ]
+
+    st.write("Filtrando datos según el periodo, departamento y provincia seleccionados:")
     st.dataframe(filtered_data)
 
 elif selected_option == "Mapas":

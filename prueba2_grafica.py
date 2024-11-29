@@ -331,3 +331,40 @@ elif selected_option == "Distribución por distrito":
         st.plotly_chart(fig_distritos)
     else:
         st.warning("No se encontraron datos para los filtros seleccionados.")
+
+elif selected_option == "Sobre Nosotros":
+    st.markdown("### ¿QUIENES SOMOS?")
+    st.write("""
+    Somos un grupo de estudiantes de la universidad peruana Cayetano Heredia, continuación, una breve descripción de cada uno de nosotros
+    """)
+
+    st.markdown("### Vanesa Rioja Cruz")
+    st.write("""
+    Facultad de ciencias e ingeniería
+    
+    CARRERA: Ing informática
+    
+    Me gusta leer libros y viajar 📚 ✈️
+    
+    Estoy interesada en tecnologías de inteligencia artificial 🖥️
+    """)
+    st.markdown("### Jander Huamani Salazar ")
+    st.write("""
+    Facultad de ciencias e ingeniería
+    
+    CARRERA: Ing informática
+
+    Me interesa la inteligencia artificial y programación de videojuegos 🖥️ 🕹️
+
+    """)
+
+    st.markdown("### Said Andre Quispe Diaz ")
+    st.write("""
+    Facultad de ciencias e ingeniería
+    
+    CARRERA: Ing Ambiental
+    
+    Amante de los animales, musica, animación y videojuegos 🐕‍🦺 🎼 
+
+    Me interesa la prtección y preservación de areas naturales 🌳
+    """)

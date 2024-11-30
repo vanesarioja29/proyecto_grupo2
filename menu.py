@@ -227,7 +227,7 @@ elif selected_option == "Mapas":
         folium_static(map_left)
 
     with col3:
-        st.subheader("Mapa Corplético y total de residuos")
+        st.subheader("Mapa Coroplético y total de residuos")
         folium_static(map_right)
 
 

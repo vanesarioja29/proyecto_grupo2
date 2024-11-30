@@ -368,3 +368,12 @@ elif selected_option == "Sobre Nosotros":
 
     Me interesa la prtección y preservación de areas naturales 🌳
     """)
+
+    st.markdown("### Victor Daniel Rivera Torres ")
+    st.write("""
+    Facultad de ciencias e ingeniería
+    
+    CARRERA: Ingeniería Informática 
+    
+    Quiero pasar Ecuaciones Diferenciales / Comer chifita / Estudios Bioinformáticos 🥴 🍜
+    """)

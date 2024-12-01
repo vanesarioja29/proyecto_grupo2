@@ -58,8 +58,8 @@ gdf_departamentos = gpd.read_file(shapefile_path)
 # Crear el menú de navegación
 selected_option = option_menu(
     menu_title=None,
-    options=["Introducción", "Data", "Mapas", "Gráfico Circular", "Sobre Nosotros"],  # Opciones del menú
-    icons=["house", "table", "map", "pie-chart", "people"],  # Iconos de las opciones
+    options=["Introducción", "Data", "Mapas", "Gráfico Circular", "Gráfico de barras", "Sobre Nosotros"],  # Opciones del menú
+    icons=["house", "table", "map", "pie-chart", "bar-chart", "people"],  # Iconos de las opciones
     default_index=0,
     orientation="horizontal" 
 )
@@ -114,14 +114,34 @@ elif selected_option == "Data":
     data = data.drop(index=[7528, 7529], errors='ignore')
     
     st.write("A continuación, puedes explorar la base de datos de residuos de forma interactiva:")
-    st.dataframe(data)
+    # Crear filtros interactivos
+    periodos = sorted(data['PERIODO'].dropna().unique())
+    periodos = [int(p) for p in periodos]
+    selected_periodo = st.selectbox("Selecciona el Periodo", periodos, index=0)
+
+    departamentos = sorted(data['DEPARTAMENTO'].dropna().unique())
+    selected_departamento = st.selectbox("Selecciona el Departamento", departamentos, index=0)
+
+    # Filtrar provincias dinámicamente según el departamento
+    provincias = sorted(data[data['DEPARTAMENTO'] == selected_departamento]['PROVINCIA'].dropna().unique())
+    selected_provincia = st.selectbox("Selecciona la Provincia", provincias, index=0)
+
+    # Filtrar los datos según los criterios seleccionados
+    filtered_data = data[
+        (data['PERIODO'] == selected_periodo) &
+        (data['DEPARTAMENTO'] == selected_departamento) &
+        (data['PROVINCIA'] == selected_provincia)
+    ]
+
+    st.write("Filtrando datos según el periodo, departamento y provincia seleccionados:")
+    st.dataframe(filtered_data)
 
 elif selected_option == "Mapas":
     st.subheader("Mapas Interactivos de Residuos en el Perú")
     st.write("""
     En esta sección, puedes explorar dos tipos de mapas:
     - **Mapa Interactivo por Departamento:** Muestra un marcador con información detallada sobre los residuos domésticos, de alimentos y maleza generados en cada departamento.
-    - **Mapa de Coroplético:** Representa los residuos totales generados en cada departamento con un esquema de colores que varía según la cantidad de toneladas.
+    - **Mapa Coroplético:** Representa los residuos totales generados en cada departamento con un esquema de colores que varía según la cantidad de toneladas.
 
     ¡Interactúa con los mapas para conocer más detalles! 🌍
     """)
@@ -207,7 +227,7 @@ elif selected_option == "Mapas":
         folium_static(map_left)
 
     with col3:
-        st.subheader("Mapa Coroplético de Residuos Totales")
+        st.subheader("Mapa Coroplético y total de residuos")
         folium_static(map_right)
 
 
@@ -260,6 +280,102 @@ elif selected_option == "Gráfico Circular":
     grouped_data = filtered_data.groupby('DEPARTAMENTO').sum().reset_index()
 
     departamentos = grouped_data['DEPARTAMENTO'].unique()
-    selected_departamento = st.selectbox("", sorted(departamentos))
+    selected_departamento = st.selectbox("Seleccione un Departamento:", sorted(departamentos))
     fig = generar_grafico_circular(selected_departamento, grouped_data)
     st.plotly_chart(fig)
+
+elif selected_option == "Gráfico de barras":
+    st.subheader("Distribución de Residuos por Distrito")
+    st.markdown("""
+    En esta sección, se muestra la **distribución de residuos** en los distritos seleccionados,
+    en función del departamento y provincia de interés. 🌎
+    """)
+
+    # Filtrar datos relevantes
+    periodos = sorted(data['PERIODO'].dropna().unique())
+    periodos = [int(p) for p in periodos]
+    selected_periodo = st.selectbox("Selecciona el Periodo", periodos, index=0)
+
+    departamentos = sorted(data['DEPARTAMENTO'].dropna().unique())
+    selected_departamento = st.selectbox("Selecciona el Departamento", departamentos, index=0)
+
+    provincias = sorted(data[data['DEPARTAMENTO'] == selected_departamento]['PROVINCIA'].dropna().unique())
+    selected_provincia = st.selectbox("Selecciona la Provincia", provincias, index=0)
+
+    # Filtrar datos según las selecciones
+    distritos_data = data[
+        (data['PERIODO'] == selected_periodo) &
+        (data['DEPARTAMENTO'] == selected_departamento) &
+        (data['PROVINCIA'] == selected_provincia)
+    ]
+
+    # Seleccionar residuos para la gráfica
+    residuos_columns = [col for col in data.columns if col.startswith('QRESIDUOS_')]
+    distritos_data['TOTAL_RESIDUOS'] = distritos_data[residuos_columns].sum(axis=1)
+
+    # Crear gráfica de barras
+    if not distritos_data.empty:
+        fig_distritos = px.bar(
+            distritos_data,
+            x="DISTRITO",
+            y="TOTAL_RESIDUOS",
+            text="TOTAL_RESIDUOS",
+            color="DISTRITO",
+            labels={"DISTRITO": "Distrito", "TOTAL_RESIDUOS": "Toneladas de Residuos (Tn)"},
+            title=f"Residuos generados por distrito en {selected_departamento} - {selected_provincia}",
+        )
+        fig_distritos.update_traces(texttemplate='%{text:.2s}', textposition='outside')
+        fig_distritos.update_layout(
+            showlegend=False,
+            height=600,
+            width=900,
+            xaxis_tickangle=-45,
+            title_x=0.5,
+            margin=dict(l=20, r=20, t=50, b=100),
+        )
+        st.plotly_chart(fig_distritos)
+    else:
+        st.warning("No se encontraron datos para los filtros seleccionados.")
+
+elif selected_option == "Sobre Nosotros":
+    st.markdown("### ¿QUIÉNES SOMOS?")
+    st.write("""
+    Somos un grupo de estudiantes de la universidad peruana Cayetano Heredia, a continuación, una breve descripción de cada uno de nosotros:
+    """)
+
+    st.markdown("### Vanesa Rioja Cruz")
+    st.write("""   
+        - Facultad de Ciencias e Ingeniería
+        - CARRERA: Ing. informática
+        - Me gusta leer libros y viajar 📚 ✈️
+        - Estoy interesada en tecnologías de inteligencia artificial 🖥️
+        - Correo de contacto: vanesa.rioja@upch.pe
+             
+    """)
+    st.markdown("### Jander Huamani Salazar")
+    st.write("""
+        - Facultad de Ciencias e Ingeniería
+        - CARRERA: Ing. informática
+        - Me interesa la inteligencia artificial y programación de videojuegos 🖥️ 🕹️
+        - Correo de contacto: jander.huamani@upch.pe
+             
+    """)
+
+    st.markdown("### Said Andre Quispe Diaz ")
+    st.write("""
+        - Facultad de Ciencias e Ingeniería
+        - CARRERA: Ing. Ambiental
+        - Amante de los animales, musica, animación y videojuegos 🐕‍🦺 🎼 
+        - Me interesa la protección y preservación de áreas naturales 🌳
+        - Correo de contacto: said.quispe@upch.pe
+             
+    """)
+
+    st.markdown("### Victor Daniel Rivera Torres ")
+    st.write("""
+        - Facultad de Ciencias e Ingeniería
+        - CARRERA: Ingeniería Informática 
+        - Quiero pasar Ecuaciones Diferenciales / Comer chifita / Estudios Bioinformáticos 🥴 🍜
+        - Correo de contacto: victor.rivera@upch.pe
+             
+    """)

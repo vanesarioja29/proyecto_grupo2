@@ -15,4 +15,4 @@ La base de datos es crucial para los gobiernos locales, quienes utilizan esta in
 
 ## Visualización Interactiva
 
-Utilizando **GeoPandas** y **Folium**, hemos creado un mapa interactivo que permite visualizar los residuos por departamento, permitiendo al usuario obtener información detallada sobre el tipo y cantidad de residuos generados. ¡Explora y conoce cómo se gestionan los residuos en cada rincón del Perú!
+Utilizando **Streamlit**, hemos creado un mapa interactivo que permite visualizar los residuos por departamento, permitiendo al usuario obtener información detallada sobre el tipo y cantidad de residuos generados. Explora y conoce cómo se gestionan los residuos en cada rincón del Perú en el siguiente link: https://proyectogrupo2-nkchjuaxhthejsir2a7s42.streamlit.app/

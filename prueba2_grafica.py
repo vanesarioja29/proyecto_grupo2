@@ -335,7 +335,7 @@ elif selected_option == "Distribución por distrito":
 elif selected_option == "Sobre Nosotros":
     st.markdown("### ¿QUIENES SOMOS?")
     st.write("""
-    Somos un grupo de estudiantes de la universidad peruana Cayetano Heredia, continuación, una breve descripción de cada uno de nosotros
+    Somos un grupo de estudiantes de la universidad peruana Cayetano Heredia, continuación, una breve descripción de cada uno de nosotros junto con nuestros correos electrónicos si tienen alguna duda con respecto al proyecto
     """)
 
     st.markdown("### Vanesa Rioja Cruz")
@@ -364,6 +364,7 @@ elif selected_option == "Sobre Nosotros":
     
     CARRERA: Ing Ambiental
     
+    CORREO: Said
     Amante de los animales, musica, animación y videojuegos 🐕‍🦺 🎼 
 
     Me interesa la prtección y preservación de areas naturales 🌳
@@ -375,5 +376,7 @@ elif selected_option == "Sobre Nosotros":
     
     CARRERA: Ingeniería Informática 
     
+    CORREO: VICTOR.RIVERA@UPCH.PE
+
     Quiero pasar Ecuaciones Diferenciales / Comer chifita / Estudios Bioinformáticos 🥴 🍜
     """)
